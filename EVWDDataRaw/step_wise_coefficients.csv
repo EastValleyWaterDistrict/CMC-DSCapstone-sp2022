@@ -1,0 +1,184 @@
+zone,term,estimate
+Lower,(Intercept),-62335.296945855924
+Lower,Tuesday,-17809.44121917059
+Lower,Thursday,-12426.732782443774
+Lower,Friday,-22801.558126921493
+Lower,Holiday,17974.769906710357
+Lower,`\`Precip (in)\``,-104141.48722721775
+Lower,`\`Max Air Temp (F)\``,5029.31772466943
+Lower,`\`Min Air Temp (F)\``,-2490.1872436683766
+Lower,`\`Avg Wind Speed (mph)\``,5017.857457841215
+Lower,Consumption_t1,0.41625653707820653
+Lower,Consumption_t2,0.08297973661235065
+Lower,Consumption_t3,0.05588334704912838
+Lower,Consumption_t5,0.05021747705210959
+Lower,Consumption_t7,0.08409685611031015
+Lower,Consumption_t14,0.05109223081254
+Lower,Consumption_t21,0.04491822729231311
+Upper,(Intercept),-275617.3484069724
+Upper,Monday,-47698.71082955023
+Upper,Tuesday,-136479.8732965908
+Upper,Wednesday,-38508.23197183094
+Upper,Thursday,-98642.62787256585
+Upper,Friday,-68689.85803506454
+Upper,Saturday,-75590.90967808696
+Upper,`\`Precip (in)\``,-293037.19328905427
+Upper,`\`Max Air Temp (F)\``,13722.54317038925
+Upper,`\`Min Air Temp (F)\``,-5315.096870455596
+Upper,`\`Avg Wind Speed (mph)\``,20219.612470972646
+Upper,Consumption_t1,0.4936057443088903
+Upper,Consumption_t2,0.16018292360282682
+Upper,Consumption_t5,0.05808468524838177
+Upper,Consumption_t7,0.04559173978499961
+Upper,Consumption_t21,0.0447999229103206
+Intermediate,(Intercept),-127578.29433333976
+Intermediate,Monday,44436.9726032363
+Intermediate,Tuesday,-27136.18964723739
+Intermediate,Thursday,-33047.95436666982
+Intermediate,Friday,-42094.990393823435
+Intermediate,`\`Precip (in)\``,-200543.67716140577
+Intermediate,`\`Max Air Temp (F)\``,6966.008796444705
+Intermediate,`\`Min Air Temp (F)\``,-3270.140853328168
+Intermediate,`\`Max Rel Hum (%)\``,900.9878863834298
+Intermediate,`\`Min Rel Hum (%)\``,-1075.6367687759357
+Intermediate,`\`Avg Wind Speed (mph)\``,13209.866011800472
+Intermediate,Consumption_t1,0.35108559006605505
+Intermediate,Consumption_t2,0.24754873440781677
+Intermediate,Consumption_t7,0.10715070624426375
+Intermediate,Consumption_t14,0.06808748695916673
+Intermediate,Consumption_t21,0.04250101290615167
+Foothill,(Intercept),-62335.296945855924
+Foothill,Tuesday,-17809.44121917059
+Foothill,Thursday,-12426.732782443774
+Foothill,Friday,-22801.558126921493
+Foothill,Holiday,17974.769906710357
+Foothill,`\`Precip (in)\``,-104141.48722721775
+Foothill,`\`Max Air Temp (F)\``,5029.31772466943
+Foothill,`\`Min Air Temp (F)\``,-2490.1872436683766
+Foothill,`\`Avg Wind Speed (mph)\``,5017.857457841215
+Foothill,Consumption_t1,0.41625653707820653
+Foothill,Consumption_t2,0.08297973661235065
+Foothill,Consumption_t3,0.05588334704912838
+Foothill,Consumption_t5,0.05021747705210959
+Foothill,Consumption_t7,0.08409685611031015
+Foothill,Consumption_t14,0.05109223081254
+Foothill,Consumption_t21,0.04491822729231311
+Mountain,(Intercept),-13616.44279323272
+Mountain,Monday,-3505.3398279631033
+Mountain,Tuesday,-4809.138099235842
+Mountain,Wednesday,-2747.728228382567
+Mountain,Thursday,-4491.3530375207765
+Mountain,Friday,-1880.57163555988
+Mountain,`\`Precip (in)\``,-16045.413354444629
+Mountain,`\`Max Air Temp (F)\``,529.8685916336822
+Mountain,`\`Min Air Temp (F)\``,-255.46341760496202
+Mountain,`\`Avg Wind Speed (mph)\``,725.6049043290898
+Mountain,Consumption_t1,0.4165560615555022
+Mountain,Consumption_t2,0.23324818763123054
+Mountain,Consumption_t4,0.09395592095710373
+Mountain,Consumption_t6,0.05586168322463303
+Mountain,Consumption_t21,0.05238035970233984
+34 Hydro,(Intercept),347.9118602242246
+34 Hydro,Monday,2071.18635202444
+34 Hydro,Tuesday,1162.881272634017
+34 Hydro,Wednesday,1402.8556390003803
+34 Hydro,Thursday,1471.6504637382327
+34 Hydro,Friday,877.3543301887453
+34 Hydro,Holiday,-1179.5140145684518
+34 Hydro,`\`Max Air Temp (F)\``,8.616544619154933
+34 Hydro,`\`Max Rel Hum (%)\``,-8.61231185075133
+34 Hydro,`\`Avg Wind Speed (mph)\``,-96.05712358036637
+34 Hydro,Consumption_t1,0.3353107419952541
+34 Hydro,Consumption_t3,0.07489078292308912
+34 Hydro,Consumption_t5,0.06178549328307764
+34 Hydro,Consumption_t6,0.10688951088717562
+34 Hydro,Consumption_t7,0.1646305858147948
+34 Hydro,Consumption_t14,0.06871771345229193
+34 Hydro,Consumption_t28,0.07161165594789091
+59 Hydro,(Intercept),-1688.0755153929226
+59 Hydro,Monday,-2812.7368590770075
+59 Hydro,Tuesday,1558.7354117599598
+59 Hydro,Wednesday,-3730.30995946736
+59 Hydro,Thursday,2133.005997119584
+59 Hydro,Friday,-2515.5685157469366
+59 Hydro,`\`Precip (in)\``,-3132.5145089699977
+59 Hydro,`\`Max Air Temp (F)\``,94.81169432460139
+59 Hydro,`\`Min Rel Hum (%)\``,-35.506516092054625
+59 Hydro,Consumption_t1,0.18974637503799294
+59 Hydro,Consumption_t2,0.2618556120640776
+59 Hydro,Consumption_t3,0.09814211692320479
+59 Hydro,Consumption_t4,0.13812333639818056
+59 Hydro,Consumption_t5,-0.07697549491445622
+59 Hydro,Consumption_t7,0.1288464885512377
+59 Hydro,Consumption_t14,0.11392796208229451
+101 Hydro,(Intercept),-657.7170716138711
+101 Hydro,Monday,-781.5341479627756
+101 Hydro,Wednesday,-242.04617832426632
+101 Hydro,Friday,-972.5034594208029
+101 Hydro,Saturday,612.1663925654483
+101 Hydro,`\`Precip (in)\``,-759.5243888332707
+101 Hydro,`\`Max Air Temp (F)\``,48.679496494254124
+101 Hydro,`\`Max Rel Hum (%)\``,-11.261273544985047
+101 Hydro,Consumption_t1,0.2522004674931055
+101 Hydro,Consumption_t2,0.20775019457678695
+101 Hydro,Consumption_t3,0.09076926723566478
+101 Hydro,Consumption_t7,0.14800076347541669
+101 Hydro,Consumption_t28,0.045013662722197395
+149 Hydro,(Intercept),-10417.651879110861
+149 Hydro,`\`Precip (in)\``,-2726.846100441772
+149 Hydro,`\`Max Air Temp (F)\``,268.28204759442355
+149 Hydro,`\`Min Air Temp (F)\``,-86.09818274098842
+149 Hydro,Consumption_t1,0.3608518437731393
+149 Hydro,Consumption_t2,0.22319225704162401
+149 Hydro,Consumption_t3,0.09860974967924517
+149 Hydro,Consumption_t6,-0.06721491665891106
+149 Hydro,Consumption_t7,0.12300775599880709
+149 Hydro,Consumption_t14,0.07585295759929765
+Canal 1,(Intercept),-3977.382696137609
+Canal 1,Monday,-2738.5442964415784
+Canal 1,Wednesday,-2525.3911359270514
+Canal 1,Thursday,-962.9735823934512
+Canal 1,Friday,-1389.5484745553513
+Canal 1,`\`Precip (in)\``,-2119.007611676108
+Canal 1,`\`Max Air Temp (F)\``,124.13455729422846
+Canal 1,`\`Min Air Temp (F)\``,-42.39289746320995
+Canal 1,`\`Avg Wind Speed (mph)\``,333.5617445294144
+Canal 1,Consumption_t1,0.14576655580510609
+Canal 1,Consumption_t2,0.23159516119985457
+Canal 1,Consumption_t3,0.07910654390189299
+Canal 1,Consumption_t4,0.09336897712268291
+Canal 1,Consumption_t5,-0.11111189688830435
+Canal 1,Consumption_t6,0.17293813698202887
+Canal 1,Consumption_t14,0.05581023593429707
+Canal 1,Consumption_t21,0.06278242485788757
+Canal 2,(Intercept),-3832.327995597399
+Canal 2,Monday,-4249.416717675339
+Canal 2,Tuesday,-1468.1218454120894
+Canal 2,Wednesday,-3915.4161690459005
+Canal 2,Thursday,-1230.7858714429544
+Canal 2,Friday,-3301.9936496194914
+Canal 2,`\`Max Air Temp (F)\``,291.8608911323817
+Canal 2,`\`Min Air Temp (F)\``,-72.74544270025692
+Canal 2,`\`Max Rel Hum (%)\``,-26.325949518787144
+Canal 2,Consumption_t1,0.3291463201844468
+Canal 2,Consumption_t2,0.16952609221716383
+Canal 2,Consumption_t3,0.07000214976342012
+Canal 2,Consumption_t7,0.07534212365554237
+Canal 2,Consumption_t14,0.05569008478816291
+Canal 2,Consumption_t21,0.03857200315255111
+Canal 3,(Intercept),-44126.324916831734
+Canal 3,Monday,-24743.859057669466
+Canal 3,Tuesday,-36500.39012402489
+Canal 3,Wednesday,-7545.976948497011
+Canal 3,Thursday,-32477.141147498365
+Canal 3,Saturday,-28463.98354035386
+Canal 3,Holiday,12189.598743796807
+Canal 3,`\`Precip (in)\``,-52242.95740459875
+Canal 3,`\`Max Air Temp (F)\``,2462.3944374161165
+Canal 3,`\`Min Air Temp (F)\``,-1031.8986947354915
+Canal 3,`\`Max Rel Hum (%)\``,-160.18715737516214
+Canal 3,Consumption_t1,0.7151859394394721
+Canal 3,Consumption_t2,0.1083413531391248
+Canal 3,Consumption_t3,-0.07024385262399623
+Canal 3,Consumption_t7,0.09020646554547568
+Canal 3,Consumption_t21,0.02995060939982142
