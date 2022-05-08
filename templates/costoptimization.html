@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html>
+<!--From https://codepen.io/frytyler/pen/EGdtg-->
+
+<head>
+  <meta charset="UTF-8">
+
+  <title>EVWD Models</title>
+</head>
+
+<style>
+  h1 {
+    color: #941b0c;
+    font-family: "Helvetica", sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 40px;
+
+  }
+
+  h2 {
+    color: #333;
+    font-family: "Helvetica", sans-serif;
+    margin-left: 110px;
+    align-items: center;
+    padding-top: 30px;
+    padding-bottom: 15px;
+
+  }
+
+  h3 {
+    color: #333;
+    font-family: "Helvetica", sans-serif;
+    margin-left: 110px;
+    margin-top: 50px;
+
+
+
+  }
+
+  .topnav {
+    background-color: #333;
+    overflow: hidden;
+    padding-top: 0px;
+  }
+
+  /* Style the links inside the navigation bar */
+  .topnav a {
+    float: left;
+    color: #f2f2f2;
+    text-align: center;
+    font-family: "Helvetica", sans-serif;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+  }
+
+  /* Change the color of links on hover */
+  .topnav a:hover {
+    background-color: #ddd;
+    color: black;
+    font-family: "Helvetica", sans-serif;
+  }
+
+  /* Add a color to the active/current link */
+  .topnav a.active {
+    background-color: #941b0c;
+    color: white;
+    font-family: "Helvetica", sans-serif;
+  }
+
+  .login {
+    width: auto;
+  }
+
+  input {
+
+    width: 8%;
+    border: solid 1px #bfc0c0;
+    border-radius: 5px;
+    font: Helvica;
+    font-size: 20px;
+    color: gray;
+  }
+
+  .costinput {
+    width: 80px;
+    border: solid 1px #bfc0c0;
+    border-radius: 5px;
+    font: Helvica;
+    font-size: 20px;
+    color: gray;
+  }
+
+  .dataInput {
+    margin-bottom: 10px;
+  }
+
+  .predictionOutputs {
+    margin-bottom: 20px;
+    margin-left: 110px
+  }
+
+  label {
+    font-family: "Helvetica", sans-serif;
+    font-size: 20px;
+    display: inline-block;
+    width: 125px;
+    margin-right: 0px;
+    margin-left: 110px;
+  }
+
+ 
+
+  .zoneName {
+    font-family: "Helvetica", sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    display: inline-block;
+    width: 150px;
+    margin-right: 0px;
+    margin-left: 20px;
+  }
+
+  .prediction {
+    font-family: "Helvetica", sans-serif;
+    font-size: 20px;
+    display: inline-block;
+    width: 100px;
+    margin-right: 0px;
+    margin-left: 0px;
+  }
+
+  button {
+    background-color: #941b0c;
+    height: 40px;
+    width: 150px;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+    opacity: 0.90;
+    text-transform: uppercase;
+    font-size: 12px;
+    cursor: pointer;
+    margin-top: 45px;
+    margin-bottom: 80px;
+    margin-left: 110px;
+  }
+
+  .predictionsSection {
+    padding-top: 30px;
+    padding-bottom: 80px;
+  }
+
+  .zoneconsumption{
+    color: #941b0c;
+    font-family: "Helvetica", sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+  }
+</style>
+
+<body>
+  <div class="login">
+
+    <div class="topnav">
+      <a class="active" href="/">Demand Prediction</a>
+      <a href="regressions">Demand Prediction 2</a>
+      <a href="costoptimization">Cost Optimization</a>
+      <a href="about">About</a>
+      <a href="help">Help</a>
+    </div>
+
+    <h1>Cost Optimization Model</h1>
+
+    <h3>The deafult value for all boosters, wells, and PRVs is 100%. If a booster, well, or PRV cannot move water at its listed capacity (for example maintenance reasons), input the percentage capacity that the plant is capable of below. This will automatically adjust the model. If a plant has been taken offline, input 0%.</h3>
+    <!-- Main Input For Receiving Query to our ML -->
+    <form action="{{ url_for('costoptimizationresults')}}" method="post">
+      
+      <h2>Predicted Zone Demand Values</h2>
+
+      <div class="dataInput">
+
+        <label>101 Hydro</label>
+        <input type="text" name="0" required="required" />
+
+        <label>149 Hydro</label>
+        <input type="text" name="1" required="required" />
+
+        <label>34 Hydro</label>
+        <input type="text" name="2" required="required" />
+
+        <label>59 Hydro</label>
+        <input type="text" name="3" required="required" />
+      </div>
+
+
+      <div class="dataInput">
+        <label>Canal 1</label>
+        <input type="text" name="4" required="required" />
+
+        <label>Canal 2</label>
+        <input type="text" name="5" required="required" />
+
+        <label>Canal 3</label>
+        <input type="text" name="6" required="required" />
+
+        <label>Foothill</label>
+        <input type="text" name="7" required="required" />
+      </div>
+
+
+      <div class="dataInput">
+        <label>Intermediate</label>
+        <input type="text" name="8" required="required" />
+
+        <label>Lower</label>
+        <input type="text" name="9" required="required" />
+
+        <label>Mountain</label>
+        <input type="text" name="10" required="required" />
+
+        <label>Upper</label>
+        <input type="text" name="11" required="required" />
+      </div>
+      
+      <h2> Booster Output Percentage</h2>
+
+      <div class="dataInput">
+        <label>P9 B1</label>
+        <input class = "costinput" type="text" required="required" name = "12" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P9 B2</label>
+        <input class = "costinput" type="text" required="required" name = "13" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P24 B1</label>
+        <input class = "costinput" type="text" required="required" name = "14" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P24 B2</label>
+        <input class = "costinput" type="text" required="required" name = "15" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P24 B3</label>
+        <input class = "costinput" type="text" required="required" name = "16" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        
+      </div>
+
+
+      <div class="dataInput">
+        <label>P25 B1</label>
+        <input class = "costinput" type="text" required="required" name = "17" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P33 B1</label>
+        <input class = "costinput" type="text" required="required" name = "18" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P33 B2</label>
+        <input class = "costinput" type="text" required="required" name = "19" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P33 B3</label>
+        <input class = "costinput" type="text" required="required" name = "20" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P34 B1</label>
+        <input class = "costinput" type="text" required="required" name = "21" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+        
+      </div>
+
+
+      <div class="dataInput">
+
+        <label>P34 B2</label>
+        <input class = "costinput" type="text" required="required" name = "22" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P37 B1</label>
+        <input class = "costinput" type="text" required="required" name = "23" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P37 B2</label>
+        <input class = "costinput" type="text" required="required" name = "24" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P39 B1</label>
+        <input class = "costinput" type="text" required="required" name = "25" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P39 B2</label>
+        <input class = "costinput" type="text" required="required" name = "26" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+        
+      </div>
+
+
+      <div class="dataInput">
+
+        <label>P39 B3</label>
+        <input class = "costinput" type="text" required="required" name = "27" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+        
+        <label>P39 B4</label>
+        <input class = "costinput" type="text" required="required" name = "28" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P40 B1</label>
+        <input class = "costinput" type="text" required="required" name = "29" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P40 B2</label>
+        <input class = "costinput" type="text" required="required" name = "30" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P40 B3</label>
+        <input class = "costinput" type="text" required="required" name = "31" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+        
+      </div>
+
+      <div class="dataInput">
+
+        <label>P40 B4</label>
+        <input class = "costinput" type="text" required="required" name = "32" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+        
+        <label>P56 B1</label>
+        <input class = "costinput" type="text" required="required" name = "33" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P56 B2</label>
+        <input class = "costinput" type="text" required="required" name = "34" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P59 B1</label>
+        <input class = "costinput" type="text" required="required" name = "35" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P59 B2</label>
+        <input class = "costinput" type="text" required="required" name = "36" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+        
+      </div>
+
+      <div class="dataInput">
+
+        <label>P59 B3</label>
+        <input class = "costinput" type="text" required="required" name = "37" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P99 B1</label>
+        <input class = "costinput" type="text" required="required" name = "38" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P99 B2</label>
+        <input class = "costinput" type="text" required="required" name = "39" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P101 B1</label>
+        <input class = "costinput" type="text" required="required" name = "40" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P101 B2</label>
+        <input class = "costinput" type="text" required="required" name = "41" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+        
+      </div>
+
+      <div class="dataInput">
+
+        <label>P108 B1</label>
+        <input class = "costinput" type="text" required="required" name = "42" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P108 B2</label>
+        <input class = "costinput" type="text" required="required" name = "43" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P125 B1</label>
+        <input class = "costinput" type="text" required="required" name = "44" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P125 B2</label>
+        <input class = "costinput" type="text" required="required" name = "45" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P127 B1</label>
+        <input class = "costinput" type="text" required="required" name = "46" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+        
+      </div>
+
+      <div class="dataInput">
+
+        <label>P127 B2</label>
+        <input class = "costinput" type="text" required="required" name = "47" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P129 B1</label>
+        <input class = "costinput" type="text" required="required" name = "48" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P129 B2</label>
+        <input class = "costinput" type="text" required="required" name = "49" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P129 B3</label>
+        <input class = "costinput" type="text" required="required" name = "50" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P129 B4</label>
+        <input class = "costinput" type="text" required="required" name = "51" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+        
+      </div>
+
+      <div class="dataInput">
+
+        <label>P129 B5</label>
+        <input class = "costinput" type="text" required="required" name = "52" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P130 B1</label>
+        <input class = "costinput" type="text" required="required" name = "53" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P130 B2</label>
+        <input class = "costinput" type="text" required="required" name = "54" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P131 B1</label>
+        <input class = "costinput" type="text" required="required" name = "55" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P131 B2</label>
+        <input class = "costinput" type="text" required="required" name = "56" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+        
+      </div>
+
+      <div class="dataInput">
+        <label>P131 B3</label>
+        <input class = "costinput" type="text" required="required" name = "57" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P134 B1</label>
+        <input class = "costinput" type="text" required="required" name = "58" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P134 B2</label>
+        <input class = "costinput" type="text" required="required" name = "59" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P134 B3</label>
+        <input class = "costinput" type="text" required="required" name = "60" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P134 B4</label>
+        <input class = "costinput" type="text" required="required" name = "61" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+        
+        
+      </div>
+
+      <div class="dataInput">
+        <label>P134 B5</label>
+        <input class = "costinput" type="text" required="required" name = "62" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P134 B6</label>
+        <input class = "costinput" type="text" required="required" name = "63" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P134 B7</label>
+        <input class = "costinput" type="text" required="required" name = "64" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P134 B8</label>
+        <input class = "costinput" type="text" required="required" name = "65" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P137 B1</label>
+        <input class = "costinput" type="text" required="required" name = "66" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+        
+        
+      </div>
+
+      <div class="dataInput">
+        <label>P137 B2</label>
+        <input class = "costinput" type="text" required="required" name = "67" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P140 B1</label>
+        <input class = "costinput" type="text" required="required" name = "68" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P140 B2</label>
+        <input class = "costinput" type="text" required="required" name = "69" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P142 B1</label>
+        <input class = "costinput" type="text" required="required" name = "70"value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;" />
+
+        <label>P142 B2</label>
+        <input class = "costinput" type="text" required="required" name = "71" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+        
+       
+      </div>
+
+      <div class="dataInput">
+        <label>P142 B3</label>
+        <input class = "costinput" type="text" required="required" name = "72" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P143 B1</label>
+        <input class = "costinput" type="text" required="required" name = "73" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P143 B2</label>
+        <input class = "costinput" type="text" required="required" name = "74" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P143 B3</label>
+        <input class = "costinput" type="text" required="required" name = "75" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P149 B1</label>
+        <input class = "costinput" type="text" required="required" name = "76" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+        
+        
+      </div>
+
+      <div class="dataInput">
+        <label>P149 B2</label>
+        <input class = "costinput" type="text" required="required" name = "77" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P149 B3</label>
+        <input class = "costinput" type="text" required="required" name = "78" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P149 B4</label>
+        <input class = "costinput" type="text" required="required" name = "79" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+      </div>
+
+      <h2>Well Output Percentage</h2>
+
+      <div class="dataInput">
+        <label>P9 W1</label>
+        <input class = "costinput" type="text" required="required" name = "80" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P11 W1</label>
+        <input class = "costinput" type="text" required="required" name = "81" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P24 W1</label>
+        <input class = "costinput" type="text" required="required" name = "82" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P24 W2</label>
+        <input class = "costinput" type="text" required="required" name = "83" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P25 W1</label>
+        <input class = "costinput" type="text" required="required" name = "84" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+        
+      </div>
+
+
+      <div class="dataInput">
+
+        <label>P28 W1</label>
+        <input class = "costinput" type="text" required="required" name = "85" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P39 W1</label>
+        <input class = "costinput" type="text" required="required" name = "86" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P125 W1</label>
+        <input class = "costinput" type="text" required="required" name = "87" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P132 W1</label>
+        <input class = "costinput" type="text" required="required" name = "88" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P141 W1</label>
+        <input class = "costinput" type="text" required="required" name = "89" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+        
+      </div>
+
+
+      <div class="dataInput">
+
+        <label>P142 W1</label>
+        <input class = "costinput" type="text" required="required" name = "90" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P143 W1</label>
+        <input class = "costinput" type="text" required="required" name = "91" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P146 W1</label>
+        <input class = "costinput" type="text" required="required" name = "92" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P146 W2</label>
+        <input class = "costinput" type="text" required="required" name = "93" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>P147 W1</label>
+        <input class = "costinput" type="text" required="required" name = "94" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+        
+      </div>
+
+      <div class="dataInput">
+        <label>P151 W1</label>
+        <input class = "costinput" type="text" required="required" name = "95" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+      </div>
+
+      <h2>PRV Usage</h2>
+
+      <div class="dataInput">
+
+        <label>PRV33</label>
+        <input class = "costinput" type="text" required="required" name = "96" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>PRV40</label>
+        <input class = "costinput" type="text" required="required" name = "97" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>PRV108</label>
+        <input class = "costinput" type="text" required="required" name = "98" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>PRV127</label>
+        <input class = "costinput" type="text" required="required" name = "99" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>PRV305</label>
+        <input class = "costinput" type="text" required="required" name = "100" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+        
+      </div>
+
+      <div class="dataInput">
+
+        <label>PRV309</label>
+        <input class = "costinput" type="text" required="required" name = "101" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>PRV311</label>
+        <input class = "costinput" type="text" required="required" name = "102" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>PRV324</label>
+        <input class = "costinput" type="text" required="required" name = "103" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>PRV325</label>
+        <input class = "costinput" type="text" required="required" name = "104" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+
+        <label>PRV326</label>
+        <input class = "costinput" type="text" required="required" name = "105" value = "1" onBlur="this.value=this.value==''
+        ? 'default' 
+        : this.value;"/>
+        
+      </div>
+        
+      </div>
+      
+
+
+      <button type="submit" class="btn btn-primary btn-block btn-large">Predict</button>
+    </form>
+
+    </div>
+
+  </div>
+
+
+</body>
+
+</html>

@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html>
+<!--From https://codepen.io/frytyler/pen/EGdtg-->
+
+<head>
+  <meta charset="UTF-8">
+
+  <title>EVWD Models</title>
+</head>
+
+<style>
+  h1 {
+    color: #941b0c;
+    font-family: "Helvetica", sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 40px;
+
+  }
+
+  h2 {
+    color: #333;
+    font-family: "Helvetica", sans-serif;
+    margin-left: 110px;
+    align-items: center;
+    padding-top: 30px;
+    padding-bottom: 15px;
+
+  }
+
+  h3 {
+    color: #941b0c;
+    font-family: "Helvetica", sans-serif;
+    margin-left: 110px;
+    font-size: 22px;
+    text-decoration: underline;
+  }
+
+  p {
+    color: #333;
+    font-family: "Helvetica", sans-serif;
+    margin-left: 110px;
+  }
+
+  .topnav {
+    background-color: #333;
+    overflow: hidden;
+    padding-top: 0px;
+  }
+
+  /* Style the links inside the navigation bar */
+  .topnav a {
+    float: left;
+    color: #f2f2f2;
+    text-align: center;
+    font-family: "Helvetica", sans-serif;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+  }
+
+  /* Change the color of links on hover */
+  .topnav a:hover {
+    background-color: #ddd;
+    color: black;
+    font-family: "Helvetica", sans-serif;
+  }
+
+  /* Add a color to the active/current link */
+  .topnav a.active {
+    background-color: #941b0c;
+    color: white;
+    font-family: "Helvetica", sans-serif;
+  }
+
+  .login {
+    width: auto;
+  }
+
+  input {
+
+    width: 80px;
+    border: solid 1px #bfc0c0;
+    border-radius: 5px;
+    font: Helvica;
+    font-size: 20px;
+    color: gray;
+  }
+
+  .dataInput {
+    margin-bottom: 10px;
+  }
+
+  .predictionOutputs {
+    margin-bottom: 20px;
+    margin-left: 110px
+  }
+
+  label {
+    font-family: "Helvetica", sans-serif;
+    font-size: 20px;
+    display: inline-block;
+    width: 125px;
+    margin-right: 0px;
+    margin-left: 110px;
+  }
+
+  .zoneName {
+    font-family: "Helvetica", sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    display: inline-block;
+    width: 150px;
+    margin-right: 0px;
+    margin-left: 20px;
+  }
+
+  .prediction {
+    font-family: "Helvetica", sans-serif;
+    font-size: 20px;
+    display: inline-block;
+    width: 100px;
+    margin-right: 0px;
+    margin-left: 0px;
+  }
+
+  button {
+    background-color: #941b0c;
+    height: 40px;
+    width: 150px;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+    opacity: 0.90;
+    text-transform: uppercase;
+    font-size: 12px;
+    cursor: pointer;
+    margin-top: 45px;
+    margin-bottom: 80px;
+    margin-left: 110px;
+  }
+
+  .predictionsSection {
+    padding-top: 30px;
+    padding-bottom: 80px;
+  }
+
+  .zoneconsumption{
+    color: #941b0c;
+    font-family: "Helvetica", sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+  }
+</style>
+
+<body>
+  <div class="login">
+
+    <div class="topnav">
+      <a class="active" href="/">Demand Prediction</a>
+      <a href="regressions">Demand Prediction 2</a>
+      <a href="costoptimization">Cost Optimization</a>
+      <a href="about">About</a>
+      <a href="help">Help</a>
+    </div>
+
+    <h1>East Valley Water District Demand Prediction Model 2</h1>
+
+
+    <!-- Main Input For Receiving Query to our ML -->
+    <form action="{{ url_for('predictTwo')}}" method="post">
+      
+      <h2> Weather Data</h2>
+
+      <div class="dataInput">
+
+        <label>Precip (in)</label>
+        <input type="text" name="0" required="required" />
+
+        <label>Max Air Temp (F)</label>
+        <input type="text" name="1" required="required" />
+
+        <label>Min Air Temp (F)</label>
+        <input type="text" name="2" required="required" />
+
+        <label>Max Rel Hum (%)</label>
+        <input type="text" name="3" required="required" />
+
+        <label>Min Rel Hum (%)</label>
+        <input type="text" name="4" required="required" />
+      </div>
+
+      <div class="dataInput">
+        
+
+
+        <label>Avg Wind Speed (mph)</label>
+        <input type="text" name="5" required="required" />
+      </div>
+
+
+
+      <h2>Previous Consumption Data for Each Zone</h2>
+  
+      <h3>101 Hydro</h3>
+
+      <div class="dataInput">
+
+        <label>T-1</label>
+        <input type="text" name="6" required="required" />
+
+        <label>T-2</label>
+        <input type="text" name="7" required="required" />
+
+        <label>T-3</label>
+        <input type="text" name="8" required="required" />
+
+        <label>T-4</label>
+        <input type="text" name="9" required="required" />
+
+        <label>T-5</label>
+        <input type="text" name="10" required="required" />
+      </div>
+
+      <div class="dataInput">
+
+        <label>T-6</label>
+        <input type="text" name="11" required="required" />
+
+        <label>T-7</label>
+        <input type="text" name="12" required="required" />
+
+        <label>T-14</label>
+        <input type="text" name="13" required="required" />
+
+        <label>T-21</label>
+        <input type="text" name="14" required="required" />
+
+        <label>T-28</label>
+        <input type="text" name="15" required="required" />
+      </div>
+
+      <h3>149 Hydro</h3>
+
+      <div class="dataInput">
+
+        <label>T-1</label>
+        <input type="text" name="16" required="required" />
+
+        <label>T-2</label>
+        <input type="text" name="17" required="required" />
+
+        <label>T-3</label>
+        <input type="text" name="18" required="required" />
+
+        <label>T-4</label>
+        <input type="text" name="19" required="required" />
+
+        <label>T-5</label>
+        <input type="text" name="20" required="required" />
+      </div>
+
+      <div class="dataInput">
+
+        <label>T-6</label>
+        <input type="text" name="21" required="required" />
+
+        <label>T-7</label>
+        <input type="text" name="22" required="required" />
+
+        <label>T-14</label>
+        <input type="text" name="23" required="required" />
+
+        <label>T-21</label>
+        <input type="text" name="24" required="required" />
+
+        <label>T-28</label>
+        <input type="text" name="25" required="required" />
+      </div>
+
+      <h3>34 Hydro</h3>
+
+      <div class="dataInput">
+
+        <label>T-1</label>
+        <input type="text" name="26" required="required" />
+
+        <label>T-2</label>
+        <input type="text" name="27" required="required" />
+
+        <label>T-3</label>
+        <input type="text" name="28" required="required" />
+
+        <label>T-4</label>
+        <input type="text" name="29" required="required" />
+
+        <label>T-5</label>
+        <input type="text" name="30" required="required" />
+      </div>
+
+      <div class="dataInput">
+
+        <label>T-6</label>
+        <input type="text" name="31" required="required" />
+
+        <label>T-7</label>
+        <input type="text" name="32" required="required" />
+
+        <label>T-14</label>
+        <input type="text" name="33" required="required" />
+
+        <label>T-21</label>
+        <input type="text" name="34" required="required" />
+
+        <label>T-28</label>
+        <input type="text" name="35" required="required" />
+      </div>
+
+
+      <h3>59 Hydro</h3>
+
+      <div class="dataInput">
+
+        <label>T-1</label>
+        <input type="text" name="36" required="required" />
+
+        <label>T-2</label>
+        <input type="text" name="37" required="required" />
+
+        <label>T-3</label>
+        <input type="text" name="38" required="required" />
+
+        <label>T-4</label>
+        <input type="text" name="39" required="required" />
+
+        <label>T-5</label>
+        <input type="text" name="40" required="required" />
+      </div>
+
+      <div class="dataInput">
+
+        <label>T-6</label>
+        <input type="text" name="41" required="required" />
+
+        <label>T-7</label>
+        <input type="text" name="42" required="required" />
+
+        <label>T-14</label>
+        <input type="text" name="43" required="required" />
+
+        <label>T-21</label>
+        <input type="text" name="44" required="required" />
+
+        <label>T-28</label>
+        <input type="text" name="45" required="required" />
+      </div>
+
+
+      <h3>Canal 1</h3>
+
+      <div class="dataInput">
+
+        <label>T-1</label>
+        <input type="text" name="46" required="required" />
+
+        <label>T-2</label>
+        <input type="text" name="47" required="required" />
+
+        <label>T-3</label>
+        <input type="text" name="48" required="required" />
+
+        <label>T-4</label>
+        <input type="text" name="49" required="required" />
+
+        <label>T-5</label>
+        <input type="text" name="50" required="required" />
+      </div>
+
+      <div class="dataInput">
+
+        <label>T-6</label>
+        <input type="text" name="51" required="required" />
+
+        <label>T-7</label>
+        <input type="text" name="52" required="required" />
+
+        <label>T-14</label>
+        <input type="text" name="53" required="required" />
+
+        <label>T-21</label>
+        <input type="text" name="54" required="required" />
+
+        <label>T-28</label>
+        <input type="text" name="55" required="required" />
+      </div>
+
+
+      <h3>Canal 2</h3>
+
+      <div class="dataInput">
+
+        <label>T-1</label>
+        <input type="text" name="56" required="required" />
+
+        <label>T-2</label>
+        <input type="text" name="57" required="required" />
+
+        <label>T-3</label>
+        <input type="text" name="58" required="required" />
+
+        <label>T-4</label>
+        <input type="text" name="59" required="required" />
+
+        <label>T-5</label>
+        <input type="text" name="60" required="required" />
+      </div>
+
+      <div class="dataInput">
+
+        <label>T-6</label>
+        <input type="text" name="61" required="required" />
+
+        <label>T-7</label>
+        <input type="text" name="62" required="required" />
+
+        <label>T-14</label>
+        <input type="text" name="63" required="required" />
+
+        <label>T-21</label>
+        <input type="text" name="64" required="required" />
+
+        <label>T-28</label>
+        <input type="text" name="65" required="required" />
+      </div>
+
+
+      <h3>Canal 3</h3>
+
+      <div class="dataInput">
+
+        <label>T-1</label>
+        <input type="text" name="66" required="required" />
+
+        <label>T-2</label>
+        <input type="text" name="67" required="required" />
+
+        <label>T-3</label>
+        <input type="text" name="68" required="required" />
+
+        <label>T-4</label>
+        <input type="text" name="69" required="required" />
+
+        <label>T-5</label>
+        <input type="text" name="70" required="required" />
+      </div>
+
+      <div class="dataInput">
+
+        <label>T-6</label>
+        <input type="text" name="71" required="required" />
+
+        <label>T-7</label>
+        <input type="text" name="72" required="required" />
+
+        <label>T-14</label>
+        <input type="text" name="73" required="required" />
+
+        <label>T-21</label>
+        <input type="text" name="74" required="required" />
+
+        <label>T-28</label>
+        <input type="text" name="75" required="required" />
+      </div>
+
+
+      <h3>Foothill</h3>
+
+      <div class="dataInput">
+
+        <label>T-1</label>
+        <input type="text" name="76" required="required" />
+
+        <label>T-2</label>
+        <input type="text" name="77" required="required" />
+
+        <label>T-3</label>
+        <input type="text" name="78" required="required" />
+
+        <label>T-4</label>
+        <input type="text" name="79" required="required" />
+
+        <label>T-5</label>
+        <input type="text" name="80" required="required" />
+      </div>
+
+      <div class="dataInput">
+
+        <label>T-6</label>
+        <input type="text" name="81" required="required" />
+
+        <label>T-7</label>
+        <input type="text" name="82" required="required" />
+
+        <label>T-14</label>
+        <input type="text" name="83" required="required" />
+
+        <label>T-21</label>
+        <input type="text" name="84" required="required" />
+
+        <label>T-28</label>
+        <input type="text" name="85" required="required" />
+      </div>
+
+      <h3>Intermediate</h3>
+
+      <div class="dataInput">
+
+        <label>T-1</label>
+        <input type="text" name="86" required="required" />
+
+        <label>T-2</label>
+        <input type="text" name="87" required="required" />
+
+        <label>T-3</label>
+        <input type="text" name="88" required="required" />
+
+        <label>T-4</label>
+        <input type="text" name="89" required="required" />
+
+        <label>T-5</label>
+        <input type="text" name="90" required="required" />
+      </div>
+
+      <div class="dataInput">
+
+        <label>T-6</label>
+        <input type="text" name="91" required="required" />
+
+        <label>T-7</label>
+        <input type="text" name="92" required="required" />
+
+        <label>T-14</label>
+        <input type="text" name="93" required="required" />
+
+        <label>T-21</label>
+        <input type="text" name="94" required="required" />
+
+        <label>T-28</label>
+        <input type="text" name="95" required="required" />
+      </div>
+
+
+      <h3>Lower</h3>
+
+      <div class="dataInput">
+
+        <label>T-1</label>
+        <input type="text" name="96" required="required" />
+
+        <label>T-2</label>
+        <input type="text" name="97" required="required" />
+
+        <label>T-3</label>
+        <input type="text" name="98" required="required" />
+
+        <label>T-4</label>
+        <input type="text" name="99" required="required" />
+
+        <label>T-5</label>
+        <input type="text" name="100" required="required" />
+      </div>
+
+      <div class="dataInput">
+
+        <label>T-6</label>
+        <input type="text" name="101" required="required" />
+
+        <label>T-7</label>
+        <input type="text" name="102" required="required" />
+
+        <label>T-14</label>
+        <input type="text" name="103" required="required" />
+
+        <label>T-21</label>
+        <input type="text" name="104" required="required" />
+
+        <label>T-28</label>
+        <input type="text" name="105" required="required" />
+      </div>
+
+
+      <h3>Mountain</h3>
+
+      <div class="dataInput">
+
+        <label>T-1</label>
+        <input type="text" name="106" required="required" />
+
+        <label>T-2</label>
+        <input type="text" name="107" required="required" />
+
+        <label>T-3</label>
+        <input type="text" name="108" required="required" />
+
+        <label>T-4</label>
+        <input type="text" name="109" required="required" />
+
+        <label>T-5</label>
+        <input type="text" name="110" required="required" />
+      </div>
+
+      <div class="dataInput">
+
+        <label>T-6</label>
+        <input type="text" name="111" required="required" />
+
+        <label>T-7</label>
+        <input type="text" name="112" required="required" />
+
+        <label>T-14</label>
+        <input type="text" name="113" required="required" />
+
+        <label>T-21</label>
+        <input type="text" name="114" required="required" />
+
+        <label>T-28</label>
+        <input type="text" name="115" required="required" />
+      </div>
+
+
+      <h3>Upper</h3>
+
+      <div class="dataInput">
+
+        <label>T-1</label>
+        <input type="text" name="116" required="required" />
+
+        <label>T-2</label>
+        <input type="text" name="117" required="required" />
+
+        <label>T-3</label>
+        <input type="text" name="118" required="required" />
+
+        <label>T-4</label>
+        <input type="text" name="119" required="required" />
+
+        <label>T-5</label>
+        <input type="text" name="120" required="required" />
+      </div>
+
+      <div class="dataInput">
+
+        <label>T-6</label>
+        <input type="text" name="121" required="required" />
+
+        <label>T-7</label>
+        <input type="text" name="122" required="required" />
+
+        <label>T-14</label>
+        <input type="text" name="123" required="required" />
+
+        <label>T-21</label>
+        <input type="text" name="124" required="required" />
+
+        <label>T-28</label>
+        <input type="text" name="125" required="required" />
+      </div>
+      
+      <h2>Other Data</h2>
+
+      <div class="dataInput">
+        <label>Day Of Week </label>
+        <input type="text" name="126" required="required" />
+
+        <label>Holiday </label>
+        <input type="text" name="127" required="required" />
+
+        <p> Sunday = 0, Monday = 1, Tuesday = 3, Wednesday = 4, Thursday = 5, Friday = 6, Saturday = 7 </p>
+
+      </div>
+
+
+      <button type="submit" class="btn btn-primary btn-block btn-large">Predict</button>
+    </form>
+
+    <h1 class = "zoneconsumption">Zone Consumption Predictions</h1>
+
+
+    <div class="predictionsSection">
+      <div class="predictionOutputs">
+        <label class="zoneName">101 Hydro:</label>
+        <label class="prediction">{{zone0}}</label>
+
+        <label class="zoneName">149 Hydro:</label>
+        <label class="prediction">{{zone1}}</label>
+
+        <label class="zoneName">34 Hydro:</label>
+        <label class="prediction">{{zone2}}</label>
+
+        <label class="zoneName">59 Hydro:</label>
+        <label class="prediction">{{zone3}}</label>
+
+        <label class="zoneName">Canal 1:</label>
+        <label class="prediction">{{zone4}}</label>
+      </div>
+
+      <div class="predictionOutputs">
+        <label class="zoneName">Canal 2:</label>
+        <label class="prediction">{{zone5}}</label>
+
+        <label class="zoneName">Canal 3:</label>
+        <label class="prediction">{{zone6}}</label>
+
+        <label class="zoneName">Foothill:</label>
+        <label class="prediction">{{zone7}}</label>
+
+        <label class="zoneName">Intermediate:</label>
+        <label class="prediction">{{zone8}}</label>
+
+        <label class="zoneName">Lower:</label>
+        <label class="prediction">{{zone9}}</label>
+      </div>
+
+      <div class="predictionOutputs">
+        <label class="zoneName">Mountain:</label>
+        <label class="prediction">{{zone10}}</label>
+
+        <label class="zoneName">Upper:</label>
+        <label class="prediction">{{zone11}}</label>
+      </div>
+    </div>
+
+  </div>
+
+
+</body>
+
+</html>
