@@ -1,0 +1,707 @@
+---
+title: "Modeling"
+author: "Min Hyung Lee"
+date: "2/28/2022"
+output: github_document
+---
+
+```{r setup, include=FALSE, echo = FALSE, warning = FALSE, message = FALSE}
+knitr::opts_chunk$set(collapse=TRUE, prompt=TRUE, eval=TRUE, message=F, include=T,comment=NULL, echo=F, warning=FALSE)
+```
+
+```{r packageCheck, include=FALSE}
+#Include all the name of the packages necessary for the analysis
+mypacks <- c("ggplot2","dplyr","readr","tidyr", "stringr", "tidyverse", "caret", "leaps", "MASS", "broom", "stargazer")
+#Find installed package list
+packs <- installed.packages()
+#Determine packages that needs to be installed
+install.me <- mypacks[!(mypacks %in% packs[,"Package"])]
+#Install necessary packages
+if (length(install.me) >= 1) install.packages(install.me, repos = "http://cran.us.r-project.org") 
+#Load all packages
+lapply(mypacks, library, character.only=TRUE)
+```
+
+```{r Zone Data Import}
+#Import daily consumption data for each zone
+df_Lower <- read_csv("~/R/sp2022-EVWD/EVWDDataRaw/Lower.csv", col_types = cols())
+df_Upper <- read_csv("~/R/sp2022-EVWD/EVWDDataRaw/Upper.csv", col_types = cols())
+df_Intermediate <- read_csv("~/R/sp2022-EVWD/EVWDDataRaw/Intermediate.csv", col_types = cols())
+df_Foothill <- read_csv("~/R/sp2022-EVWD/EVWDDataRaw/Foothill.csv", col_types = cols())
+df_Mountain <- read_csv("~/R/sp2022-EVWD/EVWDDataRaw/Mountain.csv", col_types = cols())
+df_34Hydro <- read_csv("~/R/sp2022-EVWD/EVWDDataRaw/34Hydro.csv", col_types = cols())
+df_59Hydro <- read_csv("~/R/sp2022-EVWD/EVWDDataRaw/59Hydro.csv", col_types = cols())
+df_101Hydro <- read_csv("~/R/sp2022-EVWD/EVWDDataRaw/101Hydro.csv", col_types = cols())
+df_149Hydro <- read_csv("~/R/sp2022-EVWD/EVWDDataRaw/149Hydro.csv", col_types = cols())
+df_Canal1 <- read_csv("~/R/sp2022-EVWD/EVWDDataRaw/Canal1.csv", col_types = cols())
+df_Canal2 <- read_csv("~/R/sp2022-EVWD/EVWDDataRaw/Canal2.csv", col_types = cols())
+df_Canal3 <- read_csv("~/R/sp2022-EVWD/EVWDDataRaw/Canal3.csv", col_types = cols())
+```
+
+```{r Setup for Model Stats}
+cv_repeats <- 1
+mae <- c()
+rmse <- c()
+r2 <- c()
+```
+
+```{r Lower}
+# Set seed for reproducibility
+
+set.seed(123)
+
+inTraining <- createDataPartition(df_Lower$Consumption, p = .80, list = FALSE)
+training <- df_Lower[inTraining,]
+testing  <- df_Lower[-inTraining,]
+
+# Set up repeated k-fold cross-validation
+control <- trainControl(method = "repeatedcv",
+                              number = 10,
+                              repeats = cv_repeats,
+                              search = "random",
+                              verboseIter = TRUE)
+# Train the model
+step_model <- train(Consumption ~., 
+                    data = training,
+                    method = "lmStepAIC", 
+                    trControl = control,
+                    trace = FALSE
+                    )
+
+# Summary of the model
+step_coef <- tidy(step_model$finalModel) %>% mutate(zone = "Lower") %>% 
+  dplyr::select(zone, term, estimate)
+
+model_Lower <- step_model$finalModel
+
+test.features = subset(testing, select=-c(Consumption))
+test.target = subset(testing, select=Consumption)[,1]
+
+predictions = as_tibble(predict(step_model, newdata = test.features))
+
+# MAE
+mae <- append(mae, caret::MAE(data.matrix(test.target), data.matrix(predictions)))
+
+# RMSE
+rmse <- append(rmse, caret::RMSE(data.matrix(test.target), data.matrix(predictions)))
+
+# R2
+r2 <- append(r2, caret::R2(data.matrix(test.target), data.matrix(predictions)))
+
+# Plot predictions vs test data
+my_data <- as.data.frame(cbind(data.matrix(predictions), data.matrix(test.target)))
+colnames(my_data) <- c("Predicted", "Observed")
+
+ggplot(my_data,aes(Predicted, Observed)) + geom_point(color = "darkred", alpha = 0.5) + 
+    geom_smooth(method=lm) + ggtitle("Step-Wise Regression: Prediction vs Test Data") +
+      xlab("Predecited Water Consumption ") + ylab("Observed Water Consumption") + 
+        theme(plot.title = element_text(color="darkgreen",size=16,hjust = 0.5),
+         axis.text.y = element_text(size=12), axis.text.x = element_text(size=12,hjust=.5),
+         axis.title.x = element_text(size=14), axis.title.y = element_text(size=14))
+```
+
+```{r Upper}
+# Set seed for reproducibility
+
+set.seed(123)
+
+inTraining <- createDataPartition(df_Upper$Consumption, p = .80, list = FALSE)
+training <- df_Upper[inTraining,]
+testing  <- df_Upper[-inTraining,]
+
+# Set up repeated k-fold cross-validation
+control <- trainControl(method = "repeatedcv",
+                              number = 10,
+                              repeats = cv_repeats,
+                              search = "random",
+                              verboseIter = TRUE)
+# Train the model
+step_model <- train(Consumption ~., 
+                    data = training,
+                    method = "lmStepAIC", 
+                    trControl = control,
+                    trace = FALSE
+                    )
+
+# Summary of the model
+summary(step_model$finalModel)
+
+model_Upper <- step_model$finalModel
+
+test.features = subset(testing, select=-c(Consumption))
+test.target = subset(testing, select=Consumption)[,1]
+
+predictions = as_tibble(predict(step_model, newdata = test.features))
+
+# MAE
+mae <- append(mae, caret::MAE(data.matrix(test.target), data.matrix(predictions)))
+
+# RMSE
+rmse <- append(rmse, caret::RMSE(data.matrix(test.target), data.matrix(predictions)))
+
+# R2
+r2 <- append(r2, caret::R2(data.matrix(test.target), data.matrix(predictions)))
+
+# Plot predictions vs test data
+my_data <- as.data.frame(cbind(data.matrix(predictions), data.matrix(test.target)))
+colnames(my_data) <- c("Predicted", "Observed")
+
+ggplot(my_data,aes(Predicted, Observed)) + geom_point(color = "darkred", alpha = 0.5) + 
+    geom_smooth(method=lm) + ggtitle("Step-Wise Regression: Prediction vs Test Data") +
+      xlab("Predecited Water Consumption ") + ylab("Observed Water Consumption") + 
+        theme(plot.title = element_text(color="darkgreen",size=16,hjust = 0.5),
+         axis.text.y = element_text(size=12), axis.text.x = element_text(size=12,hjust=.5),
+         axis.title.x = element_text(size=14), axis.title.y = element_text(size=14))
+```
+
+```{r Intermediate}
+# Set seed for reproducibility
+
+set.seed(123)
+
+inTraining <- createDataPartition(df_Intermediate$Consumption, p = .80, list = FALSE)
+training <- df_Intermediate[inTraining,]
+testing  <- df_Intermediate[-inTraining,]
+
+# Set up repeated k-fold cross-validation
+control <- trainControl(method = "repeatedcv",
+                              number = 10,
+                              repeats = cv_repeats,
+                              search = "random",
+                              verboseIter = TRUE)
+# Train the model
+step_model <- train(Consumption ~., 
+                    data = training,
+                    method = "lmStepAIC", 
+                    trControl = control,
+                    trace = FALSE
+                    )
+
+# Summary of the model
+summary(step_model$finalModel)
+
+summary(step_model$finalModel)
+
+model_Intermediate <- step_model$finalModel
+
+test.features = subset(testing, select=-c(Consumption))
+test.target = subset(testing, select=Consumption)[,1]
+
+predictions = as_tibble(predict(step_model, newdata = test.features))
+
+# MAE
+mae <- append(mae, caret::MAE(data.matrix(test.target), data.matrix(predictions)))
+
+# RMSE
+rmse <- append(rmse, caret::RMSE(data.matrix(test.target), data.matrix(predictions)))
+
+# R2
+r2 <- append(r2, caret::R2(data.matrix(test.target), data.matrix(predictions)))
+
+# Plot predictions vs test data
+my_data <- as.data.frame(cbind(data.matrix(predictions), data.matrix(test.target)))
+colnames(my_data) <- c("Predicted", "Observed")
+
+ggplot(my_data,aes(Predicted, Observed)) + geom_point(color = "darkred", alpha = 0.5) + 
+    geom_smooth(method=lm) + ggtitle("Step-Wise Regression: Prediction vs Test Data") +
+      xlab("Predecited Water Consumption ") + ylab("Observed Water Consumption") + 
+        theme(plot.title = element_text(color="darkgreen",size=16,hjust = 0.5),
+         axis.text.y = element_text(size=12), axis.text.x = element_text(size=12,hjust=.5),
+         axis.title.x = element_text(size=14), axis.title.y = element_text(size=14))
+```
+
+```{r Foothill}
+# Set seed for reproducibility
+
+set.seed(123)
+
+inTraining <- createDataPartition(df_Foothill$Consumption, p = .80, list = FALSE)
+training <- df_Foothill[inTraining,]
+testing  <- df_Foothill[-inTraining,]
+
+# Set up repeated k-fold cross-validation
+control <- trainControl(method = "repeatedcv",
+                              number = 10,
+                              repeats = cv_repeats,
+                              search = "random",
+                              verboseIter = TRUE)
+# Train the model
+step_model <- train(Consumption ~., 
+                    data = training,
+                    method = "lmStepAIC", 
+                    trControl = control,
+                    trace = FALSE
+                    )
+
+# Summary of the model
+summary(step_model$finalModel)
+
+summary(step_model$finalModel)
+
+model_Foothill <- step_model$finalModel
+
+test.features = subset(testing, select=-c(Consumption))
+test.target = subset(testing, select=Consumption)[,1]
+
+predictions = as_tibble(predict(step_model, newdata = test.features))
+
+# MAE
+mae <- append(mae, caret::MAE(data.matrix(test.target), data.matrix(predictions)))
+
+# RMSE
+rmse <- append(rmse, caret::RMSE(data.matrix(test.target), data.matrix(predictions)))
+
+# R2
+r2 <- append(r2, caret::R2(data.matrix(test.target), data.matrix(predictions)))
+
+# Plot predictions vs test data
+my_data <- as.data.frame(cbind(data.matrix(predictions), data.matrix(test.target)))
+colnames(my_data) <- c("Predicted", "Observed")
+
+ggplot(my_data,aes(Predicted, Observed)) + geom_point(color = "darkred", alpha = 0.5) + 
+    geom_smooth(method=lm) + ggtitle("Step-Wise Regression: Prediction vs Test Data") +
+      xlab("Predecited Water Consumption ") + ylab("Observed Water Consumption") + 
+        theme(plot.title = element_text(color="darkgreen",size=16,hjust = 0.5),
+         axis.text.y = element_text(size=12), axis.text.x = element_text(size=12,hjust=.5),
+         axis.title.x = element_text(size=14), axis.title.y = element_text(size=14))
+```
+
+```{r Mountain}
+# Set seed for reproducibility
+
+set.seed(123)
+
+inTraining <- createDataPartition(df_Mountain$Consumption, p = .80, list = FALSE)
+training <- df_Mountain[inTraining,]
+testing  <- df_Mountain[-inTraining,]
+
+# Set up repeated k-fold cross-validation
+control <- trainControl(method = "repeatedcv",
+                              number = 10,
+                              repeats = cv_repeats,
+                              search = "random",
+                              verboseIter = TRUE)
+# Train the model
+step_model <- train(Consumption ~., 
+                    data = training,
+                    method = "lmStepAIC", 
+                    trControl = control,
+                    trace = FALSE
+                    )
+
+# Summary of the model
+summary(step_model$finalModel)
+
+model_Mountain <- step_model$finalModel
+
+test.features = subset(testing, select=-c(Consumption))
+test.target = subset(testing, select=Consumption)[,1]
+
+predictions = as_tibble(predict(step_model, newdata = test.features))
+
+# MAE
+mae <- append(mae, caret::MAE(data.matrix(test.target), data.matrix(predictions)))
+
+# RMSE
+rmse <- append(rmse, caret::RMSE(data.matrix(test.target), data.matrix(predictions)))
+
+# R2
+r2 <- append(r2, caret::R2(data.matrix(test.target), data.matrix(predictions)))
+
+# Plot predictions vs test data
+my_data <- as.data.frame(cbind(data.matrix(predictions), data.matrix(test.target)))
+colnames(my_data) <- c("Predicted", "Observed")
+
+ggplot(my_data,aes(Predicted, Observed)) + geom_point(color = "darkred", alpha = 0.5) + 
+    geom_smooth(method=lm) + ggtitle("Step-Wise Regression: Prediction vs Test Data") +
+      xlab("Predecited Water Consumption ") + ylab("Observed Water Consumption") + 
+        theme(plot.title = element_text(color="darkgreen",size=16,hjust = 0.5),
+         axis.text.y = element_text(size=12), axis.text.x = element_text(size=12,hjust=.5),
+         axis.title.x = element_text(size=14), axis.title.y = element_text(size=14))
+```
+
+```{r 34Hydro}
+# Set seed for reproducibility
+
+set.seed(123)
+
+inTraining <- createDataPartition(df_34Hydro$Consumption, p = .80, list = FALSE)
+training <- df_34Hydro[inTraining,]
+testing  <- df_34Hydro[-inTraining,]
+
+# Set up repeated k-fold cross-validation
+control <- trainControl(method = "repeatedcv",
+                              number = 10,
+                              repeats = cv_repeats,
+                              search = "random",
+                              verboseIter = TRUE)
+# Train the model
+step_model <- train(Consumption ~., 
+                    data = training,
+                    method = "lmStepAIC", 
+                    trControl = control,
+                    trace = FALSE
+                    )
+
+# Summary of the model
+summary(step_model$finalModel)
+
+model_34Hydro <- step_model$finalModel
+
+test.features = subset(testing, select=-c(Consumption))
+test.target = subset(testing, select=Consumption)[,1]
+
+predictions = as_tibble(predict(step_model, newdata = test.features))
+
+# MAE
+mae <- append(mae, caret::MAE(data.matrix(test.target), data.matrix(predictions)))
+
+# RMSE
+rmse <- append(rmse, caret::RMSE(data.matrix(test.target), data.matrix(predictions)))
+
+# R2
+r2 <- append(r2, caret::R2(data.matrix(test.target), data.matrix(predictions)))
+
+# Plot predictions vs test data
+my_data <- as.data.frame(cbind(data.matrix(predictions), data.matrix(test.target)))
+colnames(my_data) <- c("Predicted", "Observed")
+
+ggplot(my_data,aes(Predicted, Observed)) + geom_point(color = "darkred", alpha = 0.5) + 
+    geom_smooth(method=lm) + ggtitle("Step-Wise Regression: Prediction vs Test Data") +
+      xlab("Predecited Water Consumption ") + ylab("Observed Water Consumption") + 
+        theme(plot.title = element_text(color="darkgreen",size=16,hjust = 0.5),
+         axis.text.y = element_text(size=12), axis.text.x = element_text(size=12,hjust=.5),
+         axis.title.x = element_text(size=14), axis.title.y = element_text(size=14))
+```
+
+```{r 59Hydro}
+# Set seed for reproducibility
+
+set.seed(123)
+
+inTraining <- createDataPartition(df_59Hydro$Consumption, p = .80, list = FALSE)
+training <- df_59Hydro[inTraining,]
+testing  <- df_59Hydro[-inTraining,]
+
+# Set up repeated k-fold cross-validation
+control <- trainControl(method = "repeatedcv",
+                              number = 10,
+                              repeats = cv_repeats,
+                              search = "random",
+                              verboseIter = TRUE)
+# Train the model
+step_model <- train(Consumption ~., 
+                    data = training,
+                    method = "lmStepAIC", 
+                    trControl = control,
+                    trace = FALSE
+                    )
+
+# Summary of the model
+summary(step_model$finalModel)
+
+model_59Hydro <- step_model$finalModel
+
+test.features = subset(testing, select=-c(Consumption))
+test.target = subset(testing, select=Consumption)[,1]
+
+predictions = as_tibble(predict(step_model, newdata = test.features))
+
+# MAE
+mae <- append(mae, caret::MAE(data.matrix(test.target), data.matrix(predictions)))
+
+# RMSE
+rmse <- append(rmse, caret::RMSE(data.matrix(test.target), data.matrix(predictions)))
+
+# R2
+r2 <- append(r2, caret::R2(data.matrix(test.target), data.matrix(predictions)))
+
+# Plot predictions vs test data
+my_data <- as.data.frame(cbind(data.matrix(predictions), data.matrix(test.target)))
+colnames(my_data) <- c("Predicted", "Observed")
+
+ggplot(my_data,aes(Predicted, Observed)) + geom_point(color = "darkred", alpha = 0.5) + 
+    geom_smooth(method=lm) + ggtitle("Step-Wise Regression: Prediction vs Test Data") +
+      xlab("Predecited Water Consumption ") + ylab("Observed Water Consumption") + 
+        theme(plot.title = element_text(color="darkgreen",size=16,hjust = 0.5),
+         axis.text.y = element_text(size=12), axis.text.x = element_text(size=12,hjust=.5),
+         axis.title.x = element_text(size=14), axis.title.y = element_text(size=14))
+```
+
+```{r 101Hydro}
+# Set seed for reproducibility
+
+set.seed(123)
+
+inTraining <- createDataPartition(df_101Hydro$Consumption, p = .80, list = FALSE)
+training <- df_101Hydro[inTraining,]
+testing  <- df_101Hydro[-inTraining,]
+
+# Set up repeated k-fold cross-validation
+control <- trainControl(method = "repeatedcv",
+                              number = 10,
+                              repeats = cv_repeats,
+                              search = "random",
+                              verboseIter = TRUE)
+# Train the model
+step_model <- train(Consumption ~., 
+                    data = training,
+                    method = "lmStepAIC", 
+                    trControl = control,
+                    trace = FALSE
+                    )
+
+# Summary of the model
+summary(step_model$finalModel)
+
+model_101Hydro <- step_model$finalModel
+
+test.features = subset(testing, select=-c(Consumption))
+test.target = subset(testing, select=Consumption)[,1]
+
+predictions = as_tibble(predict(step_model, newdata = test.features))
+
+# MAE
+mae <- append(mae, caret::MAE(data.matrix(test.target), data.matrix(predictions)))
+
+# RMSE
+rmse <- append(rmse, caret::RMSE(data.matrix(test.target), data.matrix(predictions)))
+
+# R2
+r2 <- append(r2, caret::R2(data.matrix(test.target), data.matrix(predictions)))
+
+# Plot predictions vs test data
+my_data <- as.data.frame(cbind(data.matrix(predictions), data.matrix(test.target)))
+colnames(my_data) <- c("Predicted", "Observed")
+
+ggplot(my_data,aes(Predicted, Observed)) + geom_point(color = "darkred", alpha = 0.5) + 
+    geom_smooth(method=lm) + ggtitle("Step-Wise Regression: Prediction vs Test Data") +
+      xlab("Predecited Water Consumption ") + ylab("Observed Water Consumption") + 
+        theme(plot.title = element_text(color="darkgreen",size=16,hjust = 0.5),
+         axis.text.y = element_text(size=12), axis.text.x = element_text(size=12,hjust=.5),
+         axis.title.x = element_text(size=14), axis.title.y = element_text(size=14))
+```
+
+```{r 149Hydro}
+# Set seed for reproducibility
+
+set.seed(123)
+
+inTraining <- createDataPartition(df_149Hydro$Consumption, p = .80, list = FALSE)
+training <- df_149Hydro[inTraining,]
+testing  <- df_149Hydro[-inTraining,]
+
+# Set up repeated k-fold cross-validation
+control <- trainControl(method = "repeatedcv",
+                              number = 10,
+                              repeats = cv_repeats,
+                              search = "random",
+                              verboseIter = TRUE)
+# Train the model
+step_model <- train(Consumption ~., 
+                    data = training,
+                    method = "lmStepAIC", 
+                    trControl = control,
+                    trace = FALSE
+                    )
+
+# Summary of the model
+summary(step_model$finalModel)
+
+model_159Hydro <- step_model$finalModel
+
+test.features = subset(testing, select=-c(Consumption))
+test.target = subset(testing, select=Consumption)[,1]
+
+predictions = as_tibble(predict(step_model, newdata = test.features))
+
+# MAE
+mae <- append(mae, caret::MAE(data.matrix(test.target), data.matrix(predictions)))
+
+# RMSE
+rmse <- append(rmse, caret::RMSE(data.matrix(test.target), data.matrix(predictions)))
+
+# R2
+r2 <- append(r2, caret::R2(data.matrix(test.target), data.matrix(predictions)))
+
+# Plot predictions vs test data
+my_data <- as.data.frame(cbind(data.matrix(predictions), data.matrix(test.target)))
+colnames(my_data) <- c("Predicted", "Observed")
+
+ggplot(my_data,aes(Predicted, Observed)) + geom_point(color = "darkred", alpha = 0.5) + 
+    geom_smooth(method=lm) + ggtitle("Step-Wise Regression: Prediction vs Test Data") +
+      xlab("Predecited Water Consumption ") + ylab("Observed Water Consumption") + 
+        theme(plot.title = element_text(color="darkgreen",size=16,hjust = 0.5),
+         axis.text.y = element_text(size=12), axis.text.x = element_text(size=12,hjust=.5),
+         axis.title.x = element_text(size=14), axis.title.y = element_text(size=14))
+```
+
+```{r Canal1}
+# Set seed for reproducibility
+
+set.seed(123)
+
+inTraining <- createDataPartition(df_Canal1$Consumption, p = .80, list = FALSE)
+training <- df_Canal1[inTraining,]
+testing  <- df_Canal1[-inTraining,]
+
+# Set up repeated k-fold cross-validation
+control <- trainControl(method = "repeatedcv",
+                              number = 10,
+                              repeats = cv_repeats,
+                              search = "random",
+                              verboseIter = TRUE)
+# Train the model
+step_model <- train(Consumption ~., 
+                    data = training,
+                    method = "lmStepAIC", 
+                    trControl = control,
+                    trace = FALSE
+                    )
+
+# Summary of the model
+summary(step_model$finalModel)
+
+model_Canal1 <- step_model$finalModel
+
+test.features = subset(testing, select=-c(Consumption))
+test.target = subset(testing, select=Consumption)[,1]
+
+predictions = as_tibble(predict(step_model, newdata = test.features))
+
+# MAE
+mae <- append(mae, caret::MAE(data.matrix(test.target), data.matrix(predictions)))
+
+# RMSE
+rmse <- append(rmse, caret::RMSE(data.matrix(test.target), data.matrix(predictions)))
+
+# R2
+r2 <- append(r2, caret::R2(data.matrix(test.target), data.matrix(predictions)))
+
+# Plot predictions vs test data
+my_data <- as.data.frame(cbind(data.matrix(predictions), data.matrix(test.target)))
+colnames(my_data) <- c("Predicted", "Observed")
+
+ggplot(my_data,aes(Predicted, Observed)) + geom_point(color = "darkred", alpha = 0.5) + 
+    geom_smooth(method=lm) + ggtitle("Step-Wise Regression: Prediction vs Test Data") +
+      xlab("Predecited Water Consumption ") + ylab("Observed Water Consumption") + 
+        theme(plot.title = element_text(color="darkgreen",size=16,hjust = 0.5),
+         axis.text.y = element_text(size=12), axis.text.x = element_text(size=12,hjust=.5),
+         axis.title.x = element_text(size=14), axis.title.y = element_text(size=14))
+```
+
+```{r Canal2}
+# Set seed for reproducibility
+
+set.seed(123)
+
+inTraining <- createDataPartition(df_Canal2$Consumption, p = .80, list = FALSE)
+training <- df_Canal2[inTraining,]
+testing  <- df_Canal2[-inTraining,]
+
+# Set up repeated k-fold cross-validation
+control <- trainControl(method = "repeatedcv",
+                              number = 10,
+                              repeats = cv_repeats,
+                              search = "random",
+                              verboseIter = TRUE)
+# Train the model
+step_model <- train(Consumption ~., 
+                    data = training,
+                    method = "lmStepAIC", 
+                    trControl = control,
+                    trace = FALSE
+                    )
+
+# Summary of the model
+summary(step_model$finalModel)
+
+model_Canal2 <- step_model$finalModel
+
+test.features = subset(testing, select=-c(Consumption))
+test.target = subset(testing, select=Consumption)[,1]
+
+predictions = as_tibble(predict(step_model, newdata = test.features))
+
+# MAE
+mae <- append(mae, caret::MAE(data.matrix(test.target), data.matrix(predictions)))
+
+# RMSE
+rmse <- append(rmse, caret::RMSE(data.matrix(test.target), data.matrix(predictions)))
+
+# R2
+r2 <- append(r2, caret::R2(data.matrix(test.target), data.matrix(predictions)))
+
+# Plot predictions vs test data
+my_data <- as.data.frame(cbind(data.matrix(predictions), data.matrix(test.target)))
+colnames(my_data) <- c("Predicted", "Observed")
+
+ggplot(my_data,aes(Predicted, Observed)) + geom_point(color = "darkred", alpha = 0.5) + 
+    geom_smooth(method=lm) + ggtitle("Step-Wise Regression: Prediction vs Test Data") +
+      xlab("Predecited Water Consumption ") + ylab("Observed Water Consumption") + 
+        theme(plot.title = element_text(color="darkgreen",size=16,hjust = 0.5),
+         axis.text.y = element_text(size=12), axis.text.x = element_text(size=12,hjust=.5),
+         axis.title.x = element_text(size=14), axis.title.y = element_text(size=14))
+```
+
+```{r Canal3}
+# Set seed for reproducibility
+
+set.seed(123)
+
+inTraining <- createDataPartition(df_Canal3$Consumption, p = .80, list = FALSE)
+training <- df_Canal3[inTraining,]
+testing  <- df_Canal3[-inTraining,]
+
+# Set up repeated k-fold cross-validation
+control <- trainControl(method = "repeatedcv",
+                              number = 10,
+                              repeats = cv_repeats,
+                              search = "random",
+                              verboseIter = TRUE)
+# Train the model
+step_model <- train(Consumption ~., 
+                    data = training,
+                    method = "lmStepAIC", 
+                    trControl = control,
+                    trace = FALSE
+                    )
+
+# Summary of the model
+summary(step_model$finalModel)
+
+model_Canal3 <- step_model$finalModel
+
+test.features = subset(testing, select=-c(Consumption))
+test.target = subset(testing, select=Consumption)[,1]
+
+predictions = as_tibble(predict(step_model, newdata = test.features))
+
+# MAE
+mae <- append(mae, caret::MAE(data.matrix(test.target), data.matrix(predictions)))
+
+# RMSE
+rmse <- append(rmse, caret::RMSE(data.matrix(test.target), data.matrix(predictions)))
+
+# R2
+r2 <- append(r2, caret::R2(data.matrix(test.target), data.matrix(predictions)))
+
+# Plot predictions vs test data
+my_data <- as.data.frame(cbind(data.matrix(predictions), data.matrix(test.target)))
+colnames(my_data) <- c("Predicted", "Observed")
+
+ggplot(my_data,aes(Predicted, Observed)) + geom_point(color = "darkred", alpha = 0.5) + 
+    geom_smooth(method=lm) + ggtitle("Step-Wise Regression: Prediction vs Test Data") +
+      xlab("Predecited Water Consumption ") + ylab("Observed Water Consumption") + 
+        theme(plot.title = element_text(color="darkgreen",size=16,hjust = 0.5),
+         axis.text.y = element_text(size=12), axis.text.x = element_text(size=12,hjust=.5),
+         axis.title.x = element_text(size=14), axis.title.y = element_text(size=14))
+```
+
+```{r Model Stats}
+df_step_wise <- data.frame (zone = c("Lower", "Upper", "Intermediate", "Foothill", "Mountain", "34 Hydro", "59 Hydro", "101 Hydro", "149 Hydro", "Canal 1", "Canal 2", "Canal 3"), mae, rmse, r2)
+df_step_wise
+
+#Translate final regression models for selected zones into LaTeX code
+stargazer(model_Foothill, model_Upper, title="Results", align=TRUE)
+```

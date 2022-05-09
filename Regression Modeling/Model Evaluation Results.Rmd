@@ -1,0 +1,90 @@
+---
+title: "Model Evaluation Results"
+author: "Min Hyung Lee"
+date: "4/14/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE, echo = FALSE, warning = FALSE, message = FALSE}
+knitr::opts_chunk$set(collapse=TRUE, prompt=TRUE, eval=TRUE, message=F, include=T,comment=NULL, echo=F, warning=FALSE)
+```
+
+```{r packageCheck, include=FALSE}
+#Include all the name of the packages necessary for the analysis
+mypacks <- c("tidyverse", "caret", "leaps", "MASS", "glmnet", "ggpubr", "gbm", "kernlab", "e1071", "xgboost", "pls", "xtable")
+#Find installed package list
+packs <- installed.packages()
+#Determine packages that needs to be installed
+install.me <- mypacks[!(mypacks %in% packs[,"Package"])]
+#Install necessary packages
+if (length(install.me) >= 1) install.packages(install.me, repos = "http://cran.us.r-project.org") 
+#Load all packages
+lapply(mypacks, library, character.only=TRUE)
+```
+
+```{r}
+#Add a column indicating which model it is
+df_gbm <- df_gbm %>% mutate(model = "GBM")
+df_step_wise <- df_step_wise %>% mutate(model = "Stepwise")
+df_elastic_net <- df_elastic_net %>% mutate(model = "Elastic Net")
+df_svm <- df_svm %>% mutate(model = "SVM")
+df_pca <- df_pca %>% mutate(model = "PCA")
+df_rf <- df_rf %>% mutate(model = "Random Forest")
+df_xgb <- df_xgb %>% mutate(model = "XGBoost")
+df_models <- rbind(df_gbm, df_step_wise, df_elastic_net, df_svm, df_pca, df_rf, df_xgb)
+
+#Add a column indicating how much is the mean daily consumption for each zone
+df_mean <- data.frame (zone = c("Lower", "Upper", "Intermediate", "Foothill", "Mountain", "34 Hydro", "59 Hydro", "101 Hydro", "149 Hydro", "Canal 1", "Canal 2", "Canal 3"), mean = c(mean(df_Lower$Consumption), mean(df_Upper$Consumption), mean(df_Intermediate$Consumption), mean(df_Foothill$Consumption), mean(df_Mountain$Consumption), mean(df_34Hydro$Consumption), mean(df_59Hydro$Consumption), mean(df_101Hydro$Consumption), mean(df_149Hydro$Consumption), mean(df_Canal1$Consumption), mean(df_Canal2$Consumption), mean(df_Canal3$Consumption))) 
+
+df_models <- df_models %>% left_join(df_mean, by = "zone") %>% dplyr::select(zone, model, mean, mae, rmse, r2) %>% arrange(zone, rmse)
+
+#Translate df_models into LaTeX code
+print(xtable(df_models, type = "latex"), file = "filename2.tex")
+```
+
+```{r}
+#Produce a visual on the performance of all the models for each zone based on RMSE
+ggplot(df_models %>% filter(zone == "Lower"), aes(x = reorder(model, -rmse), y = rmse)) + geom_col(aes(fill = model)) + ylab("RMSE") + coord_flip() + theme(legend.position="none", axis.title.y = element_blank()) + labs(title = "RMSEs of ML Regression Models", subtitle = "Lower Pressure Zone")
+
+ggplot(df_models %>% filter(zone == "Upper"), aes(x = reorder(model, -rmse), y = rmse)) + geom_col(aes(fill = model)) + ylab("RMSE") + coord_flip() + theme(legend.position="none", axis.title.y = element_blank()) + labs(title = "RMSEs of ML Regression Models", subtitle = "Upper Pressure Zone")
+
+ggplot(df_models %>% filter(zone == "Intermediate"), aes(x = reorder(model, -rmse), y = rmse)) + geom_col(aes(fill = model)) + ylab("RMSE") + coord_flip() + theme(legend.position="none", axis.title.y = element_blank()) + labs(title = "RMSEs of ML Regression Models", subtitle = "Intermediate Pressure Zone")
+
+ggplot(df_models %>% filter(zone == "Foothill"), aes(x = reorder(model, -rmse), y = rmse)) + geom_col(aes(fill = model)) + ylab("RMSE") + coord_flip() + theme(legend.position="none", axis.title.y = element_blank()) + labs(title = "RMSEs of ML Regression Models", subtitle = "Foothill Pressure Zone")
+
+ggplot(df_models %>% filter(zone == "Mountain"), aes(x = reorder(model, -rmse), y = rmse)) + geom_col(aes(fill = model)) + ylab("RMSE") + coord_flip() + theme(legend.position="none", axis.title.y = element_blank()) + labs(title = "RMSEs of ML Regression Models", subtitle = "Mountain Pressure Zone")
+
+ggplot(df_models %>% filter(zone == "34 Hydro"), aes(x = reorder(model, -rmse), y = rmse)) + geom_col(aes(fill = model)) + ylab("RMSE") + coord_flip() + theme(legend.position="none", axis.title.y = element_blank()) + labs(title = "RMSEs of ML Regression Models", subtitle = "34 Hydro Pressure Zone")
+
+ggplot(df_models %>% filter(zone == "59 Hydro"), aes(x = reorder(model, -rmse), y = rmse)) + geom_col(aes(fill = model)) + ylab("RMSE") + coord_flip() + theme(legend.position="none", axis.title.y = element_blank()) + labs(title = "RMSEs of ML Regression Models", subtitle = "59 Hydro Pressure Zone", y = "Daily Consumption", x = "Date")
+
+ggplot(df_models %>% filter(zone == "101 Hydro"), aes(x = reorder(model, -rmse), y = rmse)) + geom_col(aes(fill = model)) + ylab("RMSE") + coord_flip() + theme(legend.position="none", axis.title.y = element_blank()) + labs(title = "RMSEs of ML Regression Models", subtitle = "101 Hydro Pressure Zone", y = "Daily Consumption", x = "Date")
+
+ggplot(df_models %>% filter(zone == "149 Hydro"), aes(x = reorder(model, -rmse), y = rmse)) + geom_col(aes(fill = model)) + ylab("RMSE") + coord_flip() + theme(legend.position="none", axis.title.y = element_blank()) + labs(title = "RMSEs of ML Regression Models", subtitle = "149 Hydro Pressure Zone")
+
+ggplot(df_models %>% filter(zone == "Canal 1"), aes(x = reorder(model, -rmse), y = rmse)) + geom_col(aes(fill = model)) + ylab("RMSE") + coord_flip() + theme(legend.position="none", axis.title.y = element_blank()) + labs(title = "RMSEs of ML Regression Models", subtitle = "Canal 1 Pressure Zone")
+
+ggplot(df_models %>% filter(zone == "Canal 2"), aes(x = reorder(model, -rmse), y = rmse)) + geom_col(aes(fill = model)) + ylab("RMSE") + coord_flip() + theme(legend.position="none", axis.title.y = element_blank()) + labs(title = "RMSEs of ML Regression Models", subtitle = "Canal 2 Pressure Zone")
+
+ggplot(df_models %>% filter(zone == "Canal 3"), aes(x = reorder(model, -rmse), y = rmse)) + geom_col(aes(fill = model)) + ylab("RMSE") + coord_flip() + theme(legend.position="none", axis.title.y = element_blank()) + labs(title = "RMSEs of ML Regression Models", subtitle = "Canal 3 Pressure Zone")
+```
+
+```{r}
+#Produce a visual on the best model and its R-squared for each zone based on RMSE
+df_models_best <- df_models %>% arrange(rmse) %>% group_by(zone) %>% dplyr::slice(1:1) %>% arrange(desc(mean))
+
+ggdotchart(df_models_best, x = "zone", y = "r2",
+           color = "model",                              # Color by groups
+           sorting = "descending",                       # Sort value in descending order
+           rotate = TRUE,                                # Rotate vertically
+           dot.size = 2,                                 # Large dot size
+           y.text.col = TRUE,                            # Color y text by groups
+           ggtheme = theme_pubr()                        # ggplot2 theme
+           )+
+  theme_cleveland()                                      # Add dashed grids
+```
+
+```{r}
+#Write the completed data set in a new xlsx. workbook
+write_csv(df_models, file = "Models_Stats.csv", append = FALSE)
+```
