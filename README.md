@@ -18,7 +18,9 @@ The East Valley Water District
 - Once you have added your shh key to your GitHub Account, copy the shh link for the code repository in the main page (click the Code green button to see a dropdown menu with the link) 
 - Then in your computer's terminal run `cd Desktop` to navigate to your computer's dektop directory and then run `git clone copy_shh_link_here`
 - After copying the repository code to your desktop run `cd CMC-DSCapstone-sp2022` to navigate to the direcory 
-- Finally run `py webapp.py` to launch the web site locally 
+- `git pull origin main`
+- `py -m pip install -r requirements.txt`
+- Finally run `py application.py` to launch the web site locally 
 - Open [http://127.0.0.1:5000/](http://127.0.0.1:5000/) to view it in the browser.
 - (The page will reload if you make edits. You will also see any lint errors in the console.) 
 
