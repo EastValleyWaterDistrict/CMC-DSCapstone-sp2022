@@ -14,10 +14,10 @@ from IPython.display import HTML
 # Import the Linear Programming Model
 from evwdlinearprogramming import *
 
-# Create Flask App 
+# Create Flask application 
 
-app = Flask(__name__)
-nav = Nav(app)
+application = Flask(__name__)
+nav = Nav(application)
 
 nav.register_element("navbar", 
     Navbar('thenav',
@@ -41,19 +41,19 @@ model11 = pickle.load(open("TrainedModels/UpperModel.pkl", "rb"))
 
 
 
-@app.route("/")
+@application.route("/")
 def Home():
     return render_template("index.html")
 
-@app.route("/about")
+@application.route("/about")
 def About():
     return render_template("about.html")
 
-@app.route("/help")
+@application.route("/help")
 def Help():
     return render_template("help.html")
 
-@app.route("/predict", methods = ["POST"])
+@application.route("/predict", methods = ["POST"])
 
 def predict():
 
@@ -155,11 +155,11 @@ def predict():
         float_features = format(float_features)
     )
 
-@app.route("/regressions",  methods = ["POST", "GET"])
+@application.route("/regressions",  methods = ["POST", "GET"])
 def demandprediction2():
     return render_template("regressions.html")
 
-@app.route("/predictTwo",  methods = ["POST", "GET"])
+@application.route("/predictTwo",  methods = ["POST", "GET"])
 def predictTwo():
 
     # get the features from the form inputs 
@@ -305,7 +305,7 @@ def predictTwo():
         zone11 = format(round(upper_predicted_value, 3)))
 
 
-@app.route("/costoptimization", methods = ["POST", "GET"])
+@application.route("/costoptimization", methods = ["POST", "GET"])
 
 def costoptimization():
 
@@ -314,7 +314,7 @@ def costoptimization():
     )
 
 
-@app.route("/costoptimizationresults", methods = ["POST"])
+@application.route("/costoptimizationresults", methods = ["POST"])
 
 def costoptimizationresults():
 
@@ -342,6 +342,6 @@ def costoptimizationresults():
 
 
 if __name__ == "__main__":
-    app.run(debug =True)
+    application.run(debug =True)
 
     
