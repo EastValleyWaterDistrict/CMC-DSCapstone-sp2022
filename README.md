@@ -9,8 +9,8 @@ The East Valley Water District
 
 - If not already installed, download and install Python 3 from the [official python website](https://www.python.org)
 - Next install pip installer by running the following command on your computer's terminal: if windows run ` py -m ensurepip --upgrade`, and if MacOS run `python -m ensurepip --upgrade`
-- Once pip is installed run `pip install flask` to install the flask app library 
-- If any other modules or libraries are missing run `pip install name_of_module`
+- Once pip is installed run `py -m pip install flask` to install the flask app library 
+- If any other modules or libraries are missing run `py -m pip install name_of_module`
 
 ## Instructions to Run the Web App locally 
 
@@ -18,8 +18,8 @@ The East Valley Water District
 - Once you have added your shh key to your GitHub Account, copy the shh link for the code repository in the main page (click the Code green button to see a dropdown menu with the link) 
 - Then in your computer's terminal run `cd Desktop` to navigate to your computer's dektop directory and then run `git clone copy_shh_link_here`
 - After copying the repository code to your desktop run `cd CMC-DSCapstone-sp2022` to navigate to the direcory 
-- `git pull origin main`
-- `py -m pip install -r requirements.txt`
+- Pull the latest by running `git pull origin main`
+- Install all the necessary modules or libraries by running `py -m pip install -r requirements.txt`
 - Finally run `py application.py` to launch the web site locally 
 - Open [http://127.0.0.1:5000/](http://127.0.0.1:5000/) to view it in the browser.
 - (The page will reload if you make edits. You will also see any lint errors in the console.) 
